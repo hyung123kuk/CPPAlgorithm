@@ -21,7 +21,7 @@ int main()
 		const uint64 deltaTick = currentTick - lastTick;
 		lastTick = currentTick;
 
-
+		player.Update(deltaTick);
 		board.Render();
 	}
 }
