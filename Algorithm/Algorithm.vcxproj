@@ -130,6 +130,7 @@
     <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="BFSBase.cpp" />
     <ClCompile Include="DFSBase.cpp" />
+    <ClCompile Include="Dijikstra.cpp" />
     <ClCompile Include="HowGraphMake.cpp" />
     <ClCompile Include="List.cpp" />
     <ClCompile Include="Queue.cpp" />

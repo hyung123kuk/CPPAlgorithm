@@ -1,102 +1,101 @@
 #include <iostream>
-#include <vector>
+#include <stack>
 #include <queue>
-#include <list>
 using namespace std;
 
-struct Vertex
+template<typename T, typename Container = vector<T>, typename Predicate = less<T>>
+class PriorityQueue
 {
-
-};
-
-vector<Vertex> vertices;
-vector<vector<int>> adjacent;
-
-void CreateGraph()
-{
-	vertices.reserve(6);
-	adjacent = vector<vector<int>>(6, vector<int>(6, -1));
-
-	adjacent[0][1] = 15;
-	adjacent[0][3] = 35;
-
-	adjacent[1][0] = 15;
-	adjacent[1][2] = 5;
-	adjacent[1][3] = 10;
-
-	adjacent[3][4] = 5;
-	adjacent[5][4] = 5;
-
-}
-
-void Dijikstra(int here)
-{
-	struct VertexCost
+public:
+	void push(const T& data)
 	{
-		int vertex;
-		int cost;
-	};
+		//힙 구조 부터 맞춰 준다.
+		_heap.push_back(data);
+		
+		int now = static_cast<int>(_heap.size()) - 1;
 
-	list<VertexCost> discovered;
-	vector<int> best(6, INT32_MAX); // 각 정점별로 지금까지 발견한 최소 거리
-	vector<int> parent(6, -1);
-
-	discovered.push_back(VertexCost{here,0});
-	best[here] = 0;
-	parent[here] = here;
-
-	while (discovered.empty() == false)
-	{
-		list<VertexCost>::iterator bestIt;
-		int bestCost = INT32_MAX;
-
-		for (auto it = discovered.begin(); it != discovered.end(); it++)
+		//루드 노드까지 도장깨기 시작
+		while (now > 0)
 		{
-			const int cost = it->cost;
+			//부모 노드와 비교해서 더 작으면 패배
+			int next = (now - 1) / 2;
+			if (_predicate(_heap[now], _heap[next]))
+				break;
 
-			if (cost < bestCost)
-			{
-				bestCost = cost;
-				bestIt = it;
-			}
+			//데이터 교체
+			::swap(_heap[now], _heap[next]);
+			now = next;
 		}
 
-		int cost = bestIt->cost;
-		here = bestIt->vertex;
-		discovered.erase(bestIt);
+	}
 
+	void pop()
+	{
+		_heap[0] = _heap.back();
+		_heap.pop_back();
 
-		// 방문 ? 더 짧은 경로를 뒤늦게 찾았다면 스킵.
-		if (best[here] < cost)
-			continue;
+		int now = 0;
 
-		// 방문 !
-		for (int there = 0; there < 6; there++)
+		while (true)
 		{
-			// 연결되지 않았으면 스킵
-			if (adjacent[here][there] == -1)
-				continue;
+			int left = 2 * now + 1;
+			int right = 2 * now + 2;
 
-			// 더 좋은 경로를 과거에 찾았으면 스킵.
-			int nextCost = best[here] + adjacent[here][there];
-			if (nextCost >= best[there])
-				continue;
+			//리프에 도달한 경우
+			if (left >= _heap.size())
+				break;
 
-			discovered.push_back(VertexCost{ there, nextCost });
-			best[there] = nextCost;
-			parent[there] = here;
+			int next = now;
+
+			//왼쪽과 비교
+			if (_predicate (_heap[next] , _heap[left]))
+				next = left;
+
+			//둘 중 승자를 오른쪽과 비교
+			if (right < _heap.size() && _predicate(_heap[next] , _heap[right]))
+				next = right;
+			
+			if (next == now)
+				break;
+
+			::swap(_heap[now], _heap[next]);
+			now = next;
 
 		}
 
 	}
 
-}
+	T& top()
+	{
+		return _heap[0];
+	}
+
+	bool empty()
+	{
+		return _heap.empty();
+	}
+
+private:
+	Container _heap = {};
+	Predicate _predicate = {};
+};
+
 
 int main()
 {
-	CreateGraph();
+	PriorityQueue<int,vector<int>,greater<int>> pq;
+	pq.push(100);
+	pq.push(300);
+	pq.push(400);
+	pq.push(600);
 
-	Dijikstra(0);
+	while (pq.empty() == false)
+	{
+		int value = pq.top();
+		pq.pop();
+
+		cout << value << endl;
+	}
 	
 }
 
