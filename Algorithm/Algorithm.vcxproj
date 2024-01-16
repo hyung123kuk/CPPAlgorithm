@@ -133,6 +133,7 @@
     <ClCompile Include="Dijikstra.cpp" />
     <ClCompile Include="HowGraphMake.cpp" />
     <ClCompile Include="List.cpp" />
+    <ClCompile Include="PriorityQueue.cpp" />
     <ClCompile Include="Queue.cpp" />
     <ClCompile Include="Stack.cpp" />
     <ClCompile Include="Vector.cpp" />
