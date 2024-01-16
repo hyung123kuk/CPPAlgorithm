@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <queue>
 using namespace std;
 
 struct Vertex
@@ -9,7 +10,7 @@ struct Vertex
 
 vector<Vertex> vertices;
 vector<vector<int>> adjacent;
-vector<bool> visited;
+vector<bool> discovered;
 
 void CreateGraph()
 {
@@ -22,34 +23,46 @@ void CreateGraph()
 
 }
 
-void Dfs(int here)
+void Bfs(int here)
 {
-	// 방문 했다.
-	visited[here] = true;
-	cout << "Visited : " << here << endl;
+	
+	queue<int> q;
+	q.push(here);
+	discovered[here] = true;
 
-	for (int i = 0; i < adjacent[here].size(); i++)
+	while (q.empty() == false)
 	{
-		int there = adjacent[here][i];
-		if (visited[there] == false)
-			Dfs(there);
+		here = q.front();
+		q.pop();
+
+		cout << "Visited : " << here << endl;
+
+		for (int there : adjacent[here])
+		{
+			if (discovered[there])
+				continue;
+
+			q.push(there);
+			discovered[there] = true;
+		}
+
 	}
 
 }
 
-void DfsAll()
+void BfsAll()
 {
-	visited = vector<bool>(6, false);
-
 	for (int i = 0; i < 6; i++)
-		if (visited[i] == false)
-			Dfs(i);
+		if (discovered[i] == false)
+			Bfs(i);
 }
+
 
 int main()
 {
 	CreateGraph();
 
-	DfsAll();
+	discovered = vector<bool>(6, false);
+	BfsAll();
 }
 
