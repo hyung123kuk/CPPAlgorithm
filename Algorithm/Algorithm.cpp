@@ -3,10 +3,7 @@
 #include <queue>
 using namespace std;
 
-
-// 시간 복잡도 : 트리의 높이에 비례한 시간이 걸린다.
-// 시간 복잡도를 줄이기 위해 높이에 대한 최적화가 필요한데, 높이가 큰 트리 아래에 높이가 낮은 트리가 들어가는 방법을 사용한다.
-struct DisjointSet
+class DisjointSet
 {
 public:
 	DisjointSet(int n) : _parent(n), _rank(n,1)
@@ -47,7 +44,90 @@ private:
 	vector<int> _rank;
 };
 
+struct Vertex
+{
+
+};
+
+vector<Vertex> vertices;
+vector<vector<int>> adjacent;
+
+void CreateGraph()
+{
+	vertices.resize(6);
+	adjacent = vector<vector<int>>(6, vector<int>(6, -1));
+
+	adjacent[0][1] = adjacent[1][0] = 15;
+	adjacent[0][3] = adjacent[3][0] = 35;
+	adjacent[1][2] = adjacent[2][1] = 5;
+	adjacent[1][3] = adjacent[3][1] = 10;
+	adjacent[3][4] = adjacent[4][3] = 5;
+	adjacent[3][5] = adjacent[5][3] = 10;
+	adjacent[5][4] = adjacent[4][5] = 5;
+}
+
+struct CostEdge
+{
+	int cost;
+	int u;
+	int v;
+
+	bool operator<(CostEdge& other)
+	{
+		return cost < other.cost;
+	}
+};
+
+int Kruskal(vector<CostEdge>& selected)
+{
+	int ret = 0;
+
+	selected.clear();
+
+	vector<CostEdge> edges;
+
+	for (int u = 0; u < adjacent.size(); u++)
+	{
+		for (int v = 0; v < adjacent[u].size(); v++)
+		{
+			if (u > v)
+				continue;
+
+
+			int cost = adjacent[u][v];
+			if (cost == -1)
+				continue;
+
+			edges.push_back(CostEdge{ cost, u ,v });
+		}
+	}
+
+	std::sort(edges.begin(), edges.end());
+
+
+	//DisjoiuntSet 이용
+	DisjointSet sets(vertices.size());
+
+	for (CostEdge& edge : edges)
+	{
+		// 같은 그룹이면 스킵 (안 그러면 사이클 발생)
+		if (sets.Find(edge.u) == sets.Find(edge.v))
+			continue;
+
+		// 두 그룹을 합친다.
+		sets.Merge(edge.u, edge.v);
+		selected.push_back(edge);
+		ret += edge.cost;
+	}
+
+	return ret;
+}
+
 int main()
 {
+	CreateGraph();
+
+	vector<CostEdge> selected;
+	int cost = Kruskal(selected);
 	
 }
