@@ -135,6 +135,7 @@
     <ClCompile Include="List.cpp" />
     <ClCompile Include="PriorityQueue.cpp" />
     <ClCompile Include="Queue.cpp" />
+    <ClCompile Include="SortAlgorithm.cpp" />
     <ClCompile Include="Stack.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
